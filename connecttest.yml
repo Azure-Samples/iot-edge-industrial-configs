@@ -1,0 +1,27 @@
+version: '3.4'
+volumes:
+    opcplc:
+        name: opcplc
+    opcclient:
+        name: opcclient
+
+
+services:
+    opcplc:
+        image: mcr.microsoft.com/iotedge/opc-plc:latest
+        container_name: opcplc-${_OPCVAULTID}
+        hostname: opcplc-${_OPCVAULTID}
+        volumes:
+            - 'opcplc:/appdata'
+        ports:
+            - "50000:50000"
+        command: --csr  ${_PLC_OPT}
+    opcclient:
+        image: mcr.microsoft.com/iotedge/opc-client:latest
+        container_name: opcclient-${_OPCVAULTID}
+        depends_on:
+            - opcplc
+        hostname: opcclient-${_OPCVAULTID}
+        volumes:
+            - 'opcclient:/appdata'
+        command: "--csr --de opc.tcp://opcplc-${_OPCVAULTID}:50000 ${_CLIENT_OPT}"

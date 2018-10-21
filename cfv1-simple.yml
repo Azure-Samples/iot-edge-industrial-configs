@@ -1,0 +1,30 @@
+version: '3'
+services:
+    opcplc:
+        image: mcr.microsoft.com/iotedge/opc-plc:latest
+        container_name: opcplc
+        hostname: opcplc
+        ports:
+            - "50000:50000"
+        command: --aa
+    proxy:
+        image: mcr.microsoft.com/iotedge/opc-proxy:1.0.4
+        container_name: proxy
+        depends_on:
+            - publisher
+        hostname: proxy
+        command: -c ${_HUB_CS} -w 
+    publisher:
+        image: mcr.microsoft.com/iotedge/opc-publisher:2.1.4
+        container_name: publisher
+        depends_on:
+            - opcplc
+        hostname: publisher
+        volumes:
+            - '${_REPO_ROOT}:/docker'
+        ports:
+            - "62222:62222"
+        environment:
+            - _HUB_CS=${_HUB_CS}
+        command: publisher --di 60 --as=true --vc=true --pf publishednodes_opcplc.json
+
