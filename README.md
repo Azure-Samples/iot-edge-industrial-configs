@@ -1,12 +1,11 @@
 ---
 page_type: sample
-description: "Use Microsoft Azure OPC components."
+description: "Industrial IoT - Use Microsoft Azure OPC components."
 languages:
 - powershell
 products:
 - azure
 - azure-iot-hub
-- azure-iot-edge
 urlFragment: azure-iot-opc-components
 ---
 
