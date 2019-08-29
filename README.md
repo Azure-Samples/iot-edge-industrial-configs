@@ -9,7 +9,7 @@ products:
 urlFragment: azure-iot-opc-components
 ---
 
-# Using Microsoft Azure OPC Components
+# Use Microsoft Azure OPC Components
 This repository contains several configurations to show how to configure and run Microsofts Azure OPC components:
 - [OPC Publisher](https://github.com/Azure/iot-edge-opc-publisher)
 
