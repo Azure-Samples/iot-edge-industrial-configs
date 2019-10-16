@@ -1,6 +1,6 @@
 ---
 page_type: sample
-description: "Industrial IoT - Use Microsoft Azure OPC components."
+description: "How to configure and run Microsofts Azure OPC components."
 languages:
 - powershell
 products:
