@@ -15,40 +15,48 @@ This repository contains several configurations to show how to configure and run
 - [OPC Publisher](https://github.com/Azure/iot-edge-opc-publisher)
 
 ## Containers used in the configurations
+
 The setup is using 3 containers, which are all available via the Microsoft Container Registry or on Docker Hub.
 
 ### OPC Publisher
+
 OPC Publisher allows to send telemetry from OPC UA server systems to IoTHub. The source is available in [this](https://github.com/Azure/iot-edge-opc-publisher) github repository.
 
 A container is available as [mcr.microsoft.com/iotedge/opc-publisher](https://hub.docker.com/r/microsoft/iot-edge-opc-publisher/) in the Microsoft Container Registry.
 
 ### OPC PLC
+
 An OPC UA server using the [OPC UA .NET Standard Console Reference stack](https://github.com/OPCFoundation/UA-.NETStandard), with some nodes generating random data and data with anomalies. The source could be found [here](https://github.com/Azure-Samples/iot-edge-opc-plc).
 The nodeset of this server contains various nodes which can be used to generate random data or anomalies.
 
 A container is available as [mcr.microsoft.com/iotedge/opc-plc](https://hub.docker.com/r/microsoft/iot-edge-opc-plc/) in the Microsoft Container Registry.
 
 ### OPC Client
+
 An OPC UA client, using the [OPC UA .NET Standard Console Reference stack](https://github.com/OPCFoundation/UA-.NETStandard), which allows to run OPC operations on an OPC UA server. The source could be found [here](https://github.com/Azure-Samples/iot-edge-opc-client).
 
 A container is available as [mcr.microsoft.com/iotedge/opc-client](https://hub.docker.com/r/microsoft/iot-edge-opc-client/) in the Microsoft Container Registry.
 
 ### OPC Testserver
+
 An OPC UA server, based on the OPC UA .NET Standard Console Reference server. The source could be found [here](https://github.com/hansgschossmann/iot-edge-opc-publisher-testserver).
 The nodeset of this server contains various nodes used by OPC Testclient to test OPC Publisher functionality.
 
 A container is available as [hansgschossmann\iot-edge-opc-publisher-testserver](https://hub.docker.com/r/hansgschossmann/iot-edge-opc-publisher-testserver/) on Docker Hub.
 
 ### OPC Testclient
+
 An OPC UA client, based on the .NET Standard Console client, which is calling OPC UA methods of OPC Publisher to publish/unpublish nodes in the testserver. The source could be found [here](https://github.com/hansgschossmann/iot-edge-opc-publisher-testclient.git).
 The client does access OPC Publisher to publish/unpublish nodes of OPC Testserver.
 
 A container is available as [hansgschossmann\iot-edge-opc-publisher-testclient](https://hub.docker.com/r/hansgschossmann/iot-edge-opc-publisher-testclient/) on Docker Hub.
 
 ### Nomenclature
+
 - <reporoot> is the root directory of this repositories clone
 
 ### General Preparation
+
 - Define an environment variable `$env:_HUB_CS` and set it to your iothubowner connection string of the IoTHub you are using
 - If you are using docker to run the setup, create a docker bridge network with name `iot_edge` with `docker network create iot_edge`. Verify with `docker network ls`
 - The samples are using Windows as the host OS, they are using Linux containers (means that LCOW is used) and they use PowerShell as the shell
@@ -144,11 +152,11 @@ docker run -h publisher --name publisher --network iot_edge -v "$($env:_REPO_ROO
 > Verify that data is sent to the IoTHub you configured by setting `_HUB_CS` using [Device Explorer](https://github.com/Azure/azure-iot-sdk-csharp/tree/master/tools/DeviceExplorer) or [iothub-explorer](https://github.com/Azure/iothub-explorer)
 
 
-# Configurations using docker-compose
+## Configurations using docker-compose
 
-## OPC Publisher publishing data from OPC PLC
+### OPC Publisher publishing data from OPC PLC
 
-### Quickstart
+#### Quickstart
 
 Run the following PowerShell commands in the root of the repository:
 
@@ -156,7 +164,7 @@ Run the following PowerShell commands in the root of the repository:
 docker-compose -f simple.yml up
 ```
 
-### Verification
+#### Verification
 
 >Verify that opc-publisher is connected to opc-plc and that 7 items are monitored. You should see something like this in the log output of opc-publisher:
 > ```
@@ -179,9 +187,9 @@ docker-compose -f simple.yml up
 > Verify that data is sent to the IoTHub you configured by setting `_HUB_CS` using [Device Explorer](https://github.com/Azure/azure-iot-sdk-csharp/tree/master/tools/DeviceExplorer) or [iothub-explorer](https://github.com/Azure/iothub-explorer)
 
 
-## OPC PLC for Connected Factory v1
+### OPC PLC for Connected Factory v1
 
-### Quickstart
+#### Quickstart
 
 Run the following PowerShell commands in the root of the repository:
 
@@ -189,28 +197,28 @@ Run the following PowerShell commands in the root of the repository:
 docker-compose -f cfv1-simple.yml up
 ```
 
-### Verification
+#### Verification
 > Verify that the telemetry is sent to the Connected factory dashboard. There should be a "New factory" with "New Production line" shown with one station and there should be several node values "AlternatingBoolean", "DipData", ...., which should be changing
 
 > Verify that browsing the OPC UA Server "opc.tcp://opcplc:50000" via the Connected Factory dashboard is working
 
-## Testbeds
+### Testbeds
 
-### Securing communication of OPC Client and OPC PLC by signing their certificates using OPC Vault CA
+#### Securing communication of OPC Client and OPC PLC by signing their certificates using OPC Vault CA
 
 In this setup the OPC Client is testing the connectivity to the OPC PLC. By default the connectivity is not possible, because the both components have not been provisioned with the right certificates. If an OPC UA component was not provisioned with a certificate yet, it will generate a self-signed certificate on startup. This certificate can be signed by a CA and installed in the OPC UA component. After this was done for OPC Client and OPC PLC, the connectivity is working. The workflow below describes this process.
 
 Some background information on OPC UA security can be found in [this](https://opcfoundation.org/wp-content/uploads/2014/05/OPC-UA_Security_Model_for_Administrators_V1.00.pdf) whitepaper. The complete information can be found in the OPC UA specification.
 
-## Step 1
+### Step 1
 
-### Preparation
+#### Preparation
 
 - Ensure that the environment variables `$env:_PLC_OPT` and `$env:_CLIENT_OPT` are undefined. (e.g. `$env:_PLC_OPT=""` in your PowerShell)
 - Set the environment variable `$env:_OPCVAULTID` to a string which allows you to find your data again in OPC Vault. Only alphanumeric characters are allowed. For our example "123456" was used as value for this variable.
 - Ensure there are no docker volumes `opcclient` or `opcplc`. Check with `docker volume ls` and remove them with `docker volume rm <volumename>`. You may need to remove also containers with `docker rm <containerid>` if the volumes are still used by a container.
 
-### Quickstart
+#### Quickstart
 
 Run the following PowerShell command in the root of the repository:
 
@@ -218,7 +226,7 @@ Run the following PowerShell command in the root of the repository:
 docker-compose -f connecttest.yml up
 ```
 
-### Verification
+#### Verification
 
 > Verify in the log that there are no certificates installed on the first startup. Here the log output of OPC PLC (similar shows up for OPC Client):..
 > ```
@@ -238,9 +246,9 @@ docker-compose -f connecttest.yml up
 > ```
 > Important is that the reason for the failure is: Certificate is not trusted. This means that `opc-client` tried to connect to `opc-plc` and got a response back that `opc-plc` does not trust `opc-client`, because `opc-plc` can not validate the certificate `opc-client` has provided. This is a self-signed certificate and without further certificate configuration on `opc-plc`  it will not be allowed to connect.
 
-## Step 2
+### Step 2
 
-### Preparation
+#### Preparation
 
 1. Look at the log output of Step 1 and fetch "CreateSigningRequest information" for the OPC PLC and the OPC Client. Here only shown for OPC PLC:
     ```
@@ -286,7 +294,7 @@ Repeat the complete process starting with `Register New` (Step 3 above) for the 
 
 Note: While working with this scenario, you may have recognized that the `<addissuercertbase64-string>` and `<updatecrlbase64-string>` values are identical for `opcplc` and `opcclient`. This is for our use case true and can save you some time while doing the steps.
 
-### Quickstart
+#### Quickstart
 
 Run the following PowerShell command in the root of the repository:
 
@@ -294,7 +302,7 @@ Run the following PowerShell command in the root of the repository:
 docker-compose -f connecttest.yml up
 ```
 
-### Verification
+#### Verification
 
 > Verify that the two components have now signed application certificates. Check the log output for the following:
 > ```
